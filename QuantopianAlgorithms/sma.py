@@ -19,12 +19,12 @@ def initialize(context):
     
     """
     The Quantopian environment does a lot "behind the scenes"
-        
-    "context" is a python dictionary that stores information on your strategy, and
-     it is passed to other methods in your algorithm
     
     "initialize" and "handle_data" will be run (called) automatically, no
      need for us to do that ourselves
+     
+    Delete "handle_data" if you don't plan on using it, or
+     remove it's contents ("pass")
     """
 
     ##########
@@ -32,36 +32,34 @@ def initialize(context):
     """
     Define new element in context dictionary
     
+    "context" is a python dictionary that stores information on your strategy 
+     and passes it to other methods in your algorithm
+    
     "sid" allows us to search for companies/equities by name, ticker, etc.
     """
     context.aapl = sid(24)
-
-def handle_data(context, data):
     
     """
-    This method will be called on every trade event for
-     the securities you specify
+    "schedule_function" allows us to specify how many trades are made in a day
+    
+    Alternative to "handle_data," which rUnS EVeRY MINuTE!
     """
+    schedule_function(ma_crossover_handling,
+                      date_rules.every_day(),
+                      time_rules.market_open(hours=1))
 
-    ##########
+def ma_crossover_handling(context, data):
     
     """
     "data" is 'universe' of information
     """
-
+    
     ##########
     
     """
-    Gather history on aapl (asset (context.aapl), 
-     fields (price), bar_count ("How many fields of this are we interested in..." 50), 
-     frequency (one day))
+    Gather history on aapl
     """
     hist = data.history(context.aapl, 'price', 50, '1d')
-    
-    """
-    Display info in the log provided by Quantopian
-    """
-    log.info(hist.head())
     
     """
     Caculate a simple moving average for 50 days and 20 days
@@ -97,18 +95,14 @@ def handle_data(context, data):
             Essentially, we're shorting aapl (bet against the company)
             
             Borrow shares from someone at some price, sell at that price,
-            buy back at the lower price, and ultimately sell again
+             buy back at the lower price, and ultimately sell again
             """
             order_target_percent(context.aapl, -1.0)
-        
-    """
-    Needed for debugging
     
-    When a large trade is made,
-     it takes a while to fill the trade
-     
-    Since "handle_data" runs every minute,
-     new orders are initiated before previous ones close (bad...)
-    """    
-    record(leverage = context.account.leverage)
+def handle_data(context, data):
+    
+    """
+    This method will be called on every trade event for
+     the securities you specify, and it rUnS EVeRY MINuTE!
+    """
     

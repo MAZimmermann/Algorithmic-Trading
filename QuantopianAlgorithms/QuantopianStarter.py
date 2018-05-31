@@ -33,8 +33,8 @@ def initialize(context):
     """
     The Quantopian environment does a lot "behind the scenes"
         
-    "context" is a python dictionary that stores information on your strategy, and
-     it is passed to other methods in your algorithm
+    "context" is a python dictionary that stores information on your strategy
+     and passes it to other methods in your algorithm
     
     "initialize" and "handle_data" will be run (called) automatically, no
      need for us to do that ourselves
