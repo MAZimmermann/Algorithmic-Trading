@@ -5,6 +5,11 @@ Created on Tue May 29 12:04:32 2018
 @author: MAZimmermann
 """
 
+"""
+This algorithm will not work outside of Quantopian's
+ online development environment
+"""
+
 # Import Algorithm API functions
 from quantopian.algorithm import (
     attach_pipeline,
@@ -19,6 +24,22 @@ from quantopian.pipeline.filters import QTradableStocksUS
 
 
 def initialize(context):
+    
+    """
+    Initialization logic is placed here
+    """
+    ##########
+    
+    """
+    The Quantopian environment does a lot "behind the scenes"
+        
+    "context" is a python dictionary that stores information on your strategy, and
+     it is passed to other methods in your algorithm
+    
+    "initialize" and "handle_data" will be run (called) automatically, no
+     need for us to do that ourselves
+    """
+    
     # Attach pipeline to algorithm
     attach_pipeline(
         make_pipeline(),
