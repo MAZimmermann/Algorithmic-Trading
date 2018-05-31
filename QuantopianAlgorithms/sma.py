@@ -26,3 +26,8 @@ def handle_data(context, data):
     sma_50 = hist.mean()
     
     sma_20 = hist[-20:].mean()
+    
+    if sma_20 > sma_50:
+        order_target_percent(context.aapl, 1.0)
+    elif sma_20 < sma_50:
+        order_target_percent(context.aapl, -1.0)
