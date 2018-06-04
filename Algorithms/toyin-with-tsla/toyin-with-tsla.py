@@ -36,4 +36,5 @@ print(df['close'])
 # Dataframe objects have plot attributes
 # i.e. pandas will handle matplotlib in the backend for you
 df['close'].plot()
+
 plt.show()
