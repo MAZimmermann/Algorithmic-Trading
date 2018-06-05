@@ -18,12 +18,10 @@ style.use('ggplot')
 # Define new datframe, use pandas to read it
 df = pd.read_csv('tsla.csv', parse_dates=True, index_col=0)
 
-# Stock Splits:
-
 # Open high/low close
 df_ohlc = df['close'].resample('10D').ohlc()
 
-# 
+# Volume
 df_volume = df['volume'].resample('10D').sum()
 
 df_ohlc.reset_index(inplace=True)
