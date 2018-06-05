@@ -32,6 +32,6 @@ ax2 = plt.subplot2grid((6,1), (5,0), rowspan=1, colspan=1, sharex=ax1)
 # Other parameters inlude line color, label, etc.
 ax1.plot(df.index, df['close'])
 ax1.plot(df.index, df['100ma'])
-ax2.bar(df.index, df['Volume'])
+ax2.bar(df.index, df['volume'])
 
 plt.show()
