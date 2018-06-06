@@ -56,5 +56,8 @@ def save_sp500_tickers():
 # call save_sp500_tickers() and assign the return to tickerlist
 tickerlist = save_sp500_tickers()
 
+# sort tickerlist alphabetically
+tickerlist.sort()
+
 # Print the S&P 500 as ticker symbols :)
 print(tickerlist)
