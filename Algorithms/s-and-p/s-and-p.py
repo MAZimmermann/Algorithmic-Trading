@@ -46,14 +46,16 @@ def save_sp500_tickers():
     # Declare/initialize new empty ticker symbol list
     tickers = []
     
+    regex = "(?<=value=\")(.*)(?=\")"
+              
     # Iterate through table (examine each row)
     # "[1:]" allows us to skip row containing column titles
-    for row in table.findAll('tr'):
-        tickerCell = str(row.find('input', {'type': 'submit'}))
-        print(tickerCell)
-        ticker = re.match(tickerCell, "value")
-        print(ticker)
-        #tickers.append(ticker)
+    for row in table.findAll('tr')[1:]:
+        tickerTag = str(row.find('input', {'type': 'submit'}))
+        ticker = str(re.findall(regex, tickerTag))
+        ticker = ticker.replace("['", "")
+        ticker = ticker.replace("']", "")
+        tickers.append(ticker)
     
     # Create/open .pickle file ("wb" is write and binary)
     with open("sp500tickers.pickle", "wb") as f:
@@ -63,26 +65,24 @@ def save_sp500_tickers():
     return tickers
 
 def get_data(reload_sp500=False):
-
-
-    tickers = save_sp500_tickers()
     
-    """if reload_sp500:
-        tickers = save_sp500_tickers()
+    if os.path.isfile("sp500tickers.pickle"):
+        with open("sp500tickers.pickle", "rb") as f:
+            tickers = pickle.load(f)
     else:
-        with open("sp500tickers.pickle", "wb") as f:
-            tickers = pickle.load(f)"""
+        tickers = save_sp500_tickers()
     
     if not os.path.exists('stock_dfs'):
         os.makedirs('stock_dfs')
         
     end = dt.datetime.now()    
     start = end - dt.timedelta(days=365)
+
     
     for ticker in tickers[:25]:
         if not os.path.exists('stock_dfs/{}.csv'.format(ticker)):
-            #df = web.DataReader(ticker, 'iex', start, end)
-            #df.to_csv('stock_dfs/{}.csv'.format(ticker))
+            df = web.DataReader(ticker, 'iex', start, end)
+            df.to_csv('stock_dfs/{}.csv'.format(ticker))
             print('Created {}'.format(ticker))
         else:
             print('Already have {}'.format(ticker))
