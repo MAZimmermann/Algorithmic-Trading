@@ -15,17 +15,23 @@ import pickle
 import requests
 
 import datetime as dt
+
+# Import miscellaneous operating system interfaces module
 import os
+
+# Import pandas/pandas_datareader modules
 import pandas as pd
 import pandas_datareader.data as web
+
+# Import regex module
 import re
 
 def save_sp500_tickers():
     
-    # make get request to sklickcharts, store response in resp
+    # Make get request to sklickcharts, store response in resp
     resp = requests.get('https://www.slickcharts.com/sp500')
 
-    # make new beautiful soup object
+    # Make new beautiful soup object
     soup = bs.BeautifulSoup(resp.text, "lxml")
     
     """
@@ -46,6 +52,7 @@ def save_sp500_tickers():
     # Declare/initialize new empty ticker symbol list
     tickers = []
     
+    # Define regex pattern to extract ticker symbol
     regex = "(?<=value=\")(.*)(?=\")"
               
     # Iterate through table (examine each row)
@@ -53,8 +60,12 @@ def save_sp500_tickers():
     for row in table.findAll('tr')[1:]:
         tickerTag = str(row.find('input', {'type': 'submit'}))
         ticker = str(re.findall(regex, tickerTag))
+        
+        # Remove brackets and single quotes
         ticker = ticker.replace("['", "")
         ticker = ticker.replace("']", "")
+        
+        # Add ticker symbol to 'tickers' list
         tickers.append(ticker)
     
     # Create/open .pickle file ("wb" is write and binary)
@@ -66,19 +77,23 @@ def save_sp500_tickers():
 
 def get_data(reload_sp500=False):
     
+    # Use os module to check for file paths
     if os.path.isfile("sp500tickers.pickle"):
+        # Open and read sp500tickers.pickle
         with open("sp500tickers.pickle", "rb") as f:
             tickers = pickle.load(f)
     else:
+        # Run save_sp500_tickers()
         tickers = save_sp500_tickers()
     
     if not os.path.exists('stock_dfs'):
         os.makedirs('stock_dfs')
-        
-    end = dt.datetime.now()    
+    
+    # Use .now and .timedelta to avoid hardcoding dates
+    end = dt.datetime.now()
     start = end - dt.timedelta(days=365)
 
-    
+    # Read only the top 25 companies
     for ticker in tickers[:25]:
         if not os.path.exists('stock_dfs/{}.csv'.format(ticker)):
             df = web.DataReader(ticker, 'iex', start, end)
@@ -87,12 +102,13 @@ def get_data(reload_sp500=False):
         else:
             print('Already have {}'.format(ticker))
 
+# Run get data
 get_data()
 
-# call save_sp500_tickers() and assign the return to tickerlist
+# Call save_sp500_tickers() and assign the return to tickerlist
 # tickerlist = save_sp500_tickers()
 
-# sort tickerlist alphabetically
+# Sort tickerlist alphabetically
 # tickerlist.sort()
 
 # Print the S&P 500 as ticker symbols :)
