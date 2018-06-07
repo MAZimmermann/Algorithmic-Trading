@@ -18,11 +18,12 @@ import datetime as dt
 import os
 import pandas as pd
 import pandas_datareader.data as web
+import re
 
 def save_sp500_tickers():
     
-    # make get request to wikipedia, store response in resp
-    resp = requests.get('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')
+    # make get request to sklickcharts, store response in resp
+    resp = requests.get('https://www.slickcharts.com/sp500')
 
     # make new beautiful soup object
     soup = bs.BeautifulSoup(resp.text, "lxml")
@@ -39,17 +40,20 @@ def save_sp500_tickers():
       different html parsers
     """
     
-    # Use BeautifulSoup to find all table elements of class 'wikitable sortable'
-    table = soup.find('table', {'class': 'wikitable sortable'}) 
+    # Use BeautifulSoup to find all table elements of class 'table table-striped table-bordered'
+    table = soup.find('table', {'class': 'table table-striped table-bordered'})
     
     # Declare/initialize new empty ticker symbol list
     tickers = []
     
     # Iterate through table (examine each row)
     # "[1:]" allows us to skip row containing column titles
-    for row in table.findAll('tr')[1:]:
-        ticker = row.findAll('td')[0].text
-        tickers.append(ticker)
+    for row in table.findAll('tr'):
+        tickerCell = str(row.find('input', {'type': 'submit'}))
+        print(tickerCell)
+        ticker = re.match(tickerCell, "value")
+        print(ticker)
+        #tickers.append(ticker)
     
     # Create/open .pickle file ("wb" is write and binary)
     with open("sp500tickers.pickle", "wb") as f:
@@ -59,22 +63,26 @@ def save_sp500_tickers():
     return tickers
 
 def get_data(reload_sp500=False):
-    if reload_sp500:
+
+
+    tickers = save_sp500_tickers()
+    
+    """if reload_sp500:
         tickers = save_sp500_tickers()
     else:
-        with open("sp500tickers.pickle", "rb") as f:
-            tickers = pickle.load(f)
+        with open("sp500tickers.pickle", "wb") as f:
+            tickers = pickle.load(f)"""
     
     if not os.path.exists('stock_dfs'):
         os.makedirs('stock_dfs')
-
+        
     end = dt.datetime.now()    
     start = end - dt.timedelta(days=365)
     
     for ticker in tickers[:25]:
         if not os.path.exists('stock_dfs/{}.csv'.format(ticker)):
-            df = web.DataReader(ticker, 'iex', start, end)
-            df.to_csv('stock_dfs/{}.csv'.format(ticker))
+            #df = web.DataReader(ticker, 'iex', start, end)
+            #df.to_csv('stock_dfs/{}.csv'.format(ticker))
             print('Created {}'.format(ticker))
         else:
             print('Already have {}'.format(ticker))
