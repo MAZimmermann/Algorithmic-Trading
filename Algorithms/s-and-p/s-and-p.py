@@ -14,6 +14,11 @@ import pickle
 # Module for making http requests
 import requests
 
+import datetime as dt
+import os
+import pandas as pd
+import pandas_datareader.data as web
+
 def save_sp500_tickers():
     
     # make get request to wikipedia, store response in resp
@@ -53,11 +58,34 @@ def save_sp500_tickers():
     # Return ticker symbol list
     return tickers
 
+def get_data(reload_sp500=False):
+    if reload_sp500:
+        tickers = save_sp500_tickers()
+    else:
+        with open("sp500tickers.pickle", "rb") as f:
+            tickers = pickle.load(f)
+    
+    if not os.path.exists('stock_dfs'):
+        os.makedirs('stock_dfs')
+
+    end = dt.datetime.now()    
+    start = end - dt.timedelta(days=365)
+    
+    for ticker in tickers[:25]:
+        if not os.path.exists('stock_dfs/{}.csv'.format(ticker)):
+            df = web.DataReader(ticker, 'iex', start, end)
+            df.to_csv('stock_dfs/{}.csv'.format(ticker))
+            print('Created {}'.format(ticker))
+        else:
+            print('Already have {}'.format(ticker))
+
+get_data()
+
 # call save_sp500_tickers() and assign the return to tickerlist
-tickerlist = save_sp500_tickers()
+# tickerlist = save_sp500_tickers()
 
 # sort tickerlist alphabetically
-tickerlist.sort()
+# tickerlist.sort()
 
 # Print the S&P 500 as ticker symbols :)
-print(tickerlist)
+# print(tickerlist)
