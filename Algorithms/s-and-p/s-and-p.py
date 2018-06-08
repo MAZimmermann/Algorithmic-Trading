@@ -93,8 +93,7 @@ def get_data(reload_sp500=False):
     end = dt.datetime.now()
     start = end - dt.timedelta(days=365)
 
-    # Read only the top 25 companies
-    for ticker in tickers[:25]:
+    for ticker in tickers:
         if not os.path.exists('stock_dfs/{}.csv'.format(ticker)):
             df = web.DataReader(ticker, 'iex', start, end)
             df.to_csv('stock_dfs/{}.csv'.format(ticker))
@@ -102,8 +101,33 @@ def get_data(reload_sp500=False):
         else:
             print('Already have {}'.format(ticker))
 
+def compile_data():
+    with open("sp500tickers.pickle", "rb") as f:
+        tickers = pickle.load(f)
+    
+    main_df = pd.DataFrame()
+    
+    for count,ticker in enumerate(tickers):
+        df = pd.read_csv('stock_dfs/{}.csv'.format(ticker))
+        df.set_index('date', inplace=True)
+        df.rename(columns = {'close':ticker}, inplace=True)
+        df.drop(['open','high','low','volume'],1,inplace=True)
+        
+        if main_df.empty:
+            main_df = df
+        else:
+            main_df = main_df.join(df, how='outer')
+        
+        if count % 5 == 0:
+            print(count)
+            
+    print(main_df.head())
+    main_df.to_csv('sp500_joined_closes.csv')
+
 # Run get data
 get_data()
+    
+compile_data()
 
 # Call save_sp500_tickers() and assign the return to tickerlist
 # tickerlist = save_sp500_tickers()
