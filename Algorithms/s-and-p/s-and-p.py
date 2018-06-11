@@ -23,6 +23,10 @@ import os
 import pandas as pd
 import pandas_datareader.data as web
 
+import matplotlib.pyplot as plt
+from matplotlib import style
+style.use('ggplot')
+
 # Import regex module
 import re
 
@@ -124,10 +128,19 @@ def compile_data():
     print(main_df.head())
     main_df.to_csv('sp500_joined_closes.csv')
 
-# Run get data
-get_data()
+def visualize_data():
+    df = pd.read_csv('sp500_joined_closes.csv')
+    df['AAPL'].plot()
+    plt.show()
     
+# Get the data
+get_data()
+
+# Compile the data    
 compile_data()
+
+# Visualize the data
+visualize_data()
 
 # Call save_sp500_tickers() and assign the return to tickerlist
 # tickerlist = save_sp500_tickers()
