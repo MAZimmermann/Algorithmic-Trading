@@ -149,14 +149,47 @@ def visualize_data():
     
     # Create correlation table of our dataframe
     df_corr = df.corr()
+    """
+     .corr will look at ALL the information in our dataframe and
+      generate correlation values
+      
+     A new dataframe, df_corr, will be returned
+    """
     
-    #print(df_corr.head())
+    print(df_corr.head())
     
-    data = df_corr.values
+    # Grab the innervalues of df_corr, not index and headers
+    data = df_corr.values # NumPy array of collumns and rows
+    
+    """
+     Correlation is a statistical measure of how two securities move in relation
+      to eachother
+     
+     Correlation is represented by the correlation coefficient, which ranges between
+      -1 and +1
+     
+     The prices of two securities move in a similar direction, they are
+      often said to be correlated
+     
+     0 = no correlation
+     1 = perfect correlation
+     -1 = perfect negative correlation
+    """
+    
+    # Define new figure, outermost plt object housing graphs/plots/etc.
     fig = plt.figure()
+    
+    # Add subplot, (1,1,1) means our plot will take up the entire figure
     ax = fig.add_subplot(1,1,1)
     
-    heatmap = ax.pcolor(data, cmap=plt.cm.RdYlGn)
+    # We're passing our "data" dataframe and defining our colormap color scheme
+    heatmap = ax.pcolor(data, cmap=plt.cm.YlOrBr)
+    """
+     Heatmaps represent data in the form of a map or diagram in which
+      data values are represented as colors
+    """
+    
+    
     fig.colorbar(heatmap)
     ax.set_xticks(np.arange(data.shape[0]) + 0.5, minor=False)
     ax.set_yticks(np.arange(data.shape[1]) + 0.5, minor=False)
