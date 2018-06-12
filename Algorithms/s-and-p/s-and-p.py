@@ -137,6 +137,12 @@ def compile_data():
     main_df.to_csv('sp500_joined_closes.csv')
 
 def visualize_data():
+    
+    """
+     Can we find any relationship with the dataset?
+    """
+    
+    # Read sp500_joined_closes.csv into a new dataframe
     df = pd.read_csv('sp500_joined_closes.csv')
     """df['AAPL'].plot()
     plt.show()"""
