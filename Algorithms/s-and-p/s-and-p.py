@@ -183,29 +183,40 @@ def visualize_data():
     ax = fig.add_subplot(1,1,1)
     
     # We're passing our "data" dataframe and defining our colormap color scheme
-    heatmap = ax.pcolor(data, cmap=plt.cm.YlOrBr)
+    heatmap = ax.pcolor(data, cmap=plt.cm.RdYlGn)
     """
      Heatmaps represent data in the form of a map or diagram in which
       data values are represented as colors
     """
     
-    
+    # Show colorbar as legend for heatmap
     fig.colorbar(heatmap)
+    
+    # Set up ticks for showing company tickers along the x and y axes
     ax.set_xticks(np.arange(data.shape[0]) + 0.5, minor=False)
     ax.set_yticks(np.arange(data.shape[1]) + 0.5, minor=False)
     
+    # Avoid potential gap at the top of matplotlib graph
     ax.invert_yaxis()
+    
+    # Move ticks along the x-axis to the top of the graph
     ax.xaxis.tick_top()
     
+    # Since this is a pure correlation table, bot lists should be identical
     column_labels = df_corr.columns
     row_labels = df_corr.index
-    
+
+    # Set the ticklabels for the ticks we defined above    
     ax.set_xticklabels(column_labels)
     ax.set_yticklabels(row_labels)
     
+    # Labels are horizontal by default, rotate 90 degrees to save some space
     plt.xticks(rotation=90)
+
+    # Set heatmap color limit (max and min)
     heatmap.set_clim(-1,1)
 
+    # Automatically adjust subplot params to fit subplot(s) in the figure area
     plt.tight_layout()
     
     plt.show
