@@ -23,9 +23,17 @@ import os
 import pandas as pd
 import pandas_datareader.data as web
 
+# Import matplotlib, a Python 2D plotting library
 import matplotlib.pyplot as plt
+
+# The style package adds support for easy-to-switch plotting "styles"
 from matplotlib import style
+
+# ggplot is a plotting system for Python based on R's ggplot2 and the Grammar of Graphics
 style.use('ggplot')
+
+# Import numpy, a package for scientific computing in Python
+import numpy as np
 
 # Import regex module
 import re
@@ -130,14 +138,44 @@ def compile_data():
 
 def visualize_data():
     df = pd.read_csv('sp500_joined_closes.csv')
-    df['AAPL'].plot()
-    plt.show()
+    """df['AAPL'].plot()
+    plt.show()"""
     
-# Get the data
-get_data()
+    # Create correlation table of our dataframe
+    df_corr = df.corr()
+    
+    #print(df_corr.head())
+    
+    data = df_corr.values
+    fig = plt.figure()
+    ax = fig.add_subplot(1,1,1)
+    
+    heatmap = ax.pcolor(data, cmap=plt.cm.RdYlGn)
+    fig.colorbar(heatmap)
+    ax.set_xticks(np.arange(data.shape[0]) + 0.5, minor=False)
+    ax.set_yticks(np.arange(data.shape[1]) + 0.5, minor=False)
+    
+    ax.invert_yaxis()
+    ax.xaxis.tick_top()
+    
+    column_labels = df_corr.columns
+    row_labels = df_corr.index
+    
+    ax.set_xticklabels(column_labels)
+    ax.set_yticklabels(row_labels)
+    
+    plt.xticks(rotation=90)
+    heatmap.set_clim(-1,1)
 
-# Compile the data    
-compile_data()
+    plt.tight_layout()
+    
+    plt.show
+    
+# Get the data (don't need to run it again, data already collected)
+#get_data()
+
+# Compile the data (don't need to run it again, data already compiled)
+#compile_data()
 
 # Visualize the data
 visualize_data()
