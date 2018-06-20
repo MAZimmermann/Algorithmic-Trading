@@ -59,23 +59,26 @@ def save_sp500_tickers():
     """
     
     # Use BeautifulSoup to find all table elements of class 'table table-striped table-bordered'
-    table = soup.find('table', {'class': 'table table-striped table-bordered'})
+    table = soup.find('table', {'class': 'table table-hover'})
     
     # Declare/initialize new empty ticker symbol list
     tickers = []
     
     # Define regex pattern to extract ticker symbol
-    regex = "(?<=value=\")(.*)(?=\")"
+    """ regex = "(?<=value=\")(.*)(?=\")" no longer needed, 
+    slickcharts changed their table layout... """
               
     # Iterate through table (examine each row)
     # "[1:]" allows us to skip row containing column titles
     for row in table.findAll('tr')[1:]:
-        tickerTag = str(row.find('input', {'type': 'submit'}))
-        ticker = str(re.findall(regex, tickerTag))
+        tickerTag = str(row.find('a')['href'])
+        ticker = tickerTag.replace("/symbol/","")
+        print(ticker)
         
         # Remove brackets and single quotes
-        ticker = ticker.replace("['", "")
-        ticker = ticker.replace("']", "")
+        """ ticker = ticker.replace("['", "")
+        ticker = ticker.replace("']", "") no longer needed,
+        slickcharts changed their table layout... """
         
         # Add ticker symbol to 'tickers' list
         tickers.append(ticker)
@@ -83,7 +86,11 @@ def save_sp500_tickers():
     # Create/open .pickle file ("wb" is write and binary)
     with open("sp500tickers.pickle", "wb") as f:
         pickle.dump(tickers, f)
-       
+    
+    # Create/open .pickle file ("wb" is write and binary)
+    with open("../preprocessing-for-ml/sp500tickers.pickle", "wb") as f:
+        pickle.dump(tickers, f)
+    
     # Return ticker symbol list
     return tickers
 
@@ -97,7 +104,7 @@ def get_data(reload_sp500=False):
     else:
         # Run save_sp500_tickers()
         tickers = save_sp500_tickers()
-    
+
     if not os.path.exists('stock_dfs'):
         os.makedirs('stock_dfs')
     
@@ -134,7 +141,10 @@ def compile_data():
             print(count)
             
     print(main_df.head())
+    
     main_df.to_csv('sp500_joined_closes.csv')
+    
+    main_df.to_csv('../preprocessing-for-ml/sp500_joined_closes.csv')
 
 def visualize_data():
     
@@ -222,10 +232,10 @@ def visualize_data():
     plt.show
     
 # Get the data (don't need to run it again, data already collected)
-#get_data()
+get_data()
 
 # Compile the data (don't need to run it again, data already compiled)
-#compile_data()
+compile_data()
 
 # Visualize the data
 visualize_data()
