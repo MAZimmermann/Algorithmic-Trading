@@ -142,8 +142,10 @@ def compile_data():
             
     print(main_df.head())
     
+    # Save dataframe as a csv
     main_df.to_csv('sp500_joined_closes.csv')
-    
+
+    # Save dataframe as a csv (for related project)    
     main_df.to_csv('../preprocessing-for-ml/sp500_joined_closes.csv')
 
 def visualize_data():
@@ -232,10 +234,10 @@ def visualize_data():
     plt.show
     
 # Get the data (don't need to run it again, data already collected)
-get_data()
+# get_data()
 
 # Compile the data (don't need to run it again, data already compiled)
-compile_data()
+# compile_data()
 
 # Visualize the data
 visualize_data()
