@@ -32,5 +32,33 @@ def process_data_for_labels(ticker):
     df.fillna(0, inplace=True)
     return tickers, df
 
-# Call process_data_for_labels
-process_data_for_labels('XOM')
+def buy_sell_hold(*args):
+
+    """
+     This function will produce buy, sell, and hold values that
+      will be mapped to a new column in our dataframe
+    
+     1 indicates buy
+     
+     -1 indicates sell
+     
+     0 indicates hold
+    """
+    
+    cols = [c for c in args]
+    
+    # 
+    requirements = 0.02
+    
+    for col in cols:
+        
+        # Buy
+        if col > requirement:
+            return 1
+        
+        # Sell
+        if col < -requirement:
+            return -1
+    
+    # Hold
+    return 0
