@@ -45,20 +45,18 @@ def buy_sell_hold(*args):
      0 indicates hold
     """
     
+    # Iterate by row, but pass columns as parameters
     cols = [c for c in args]
     
-    # 
-    requirements = 0.02
+    # Set stock price change requirement (in this case, 2%)
+    requirement = 0.02
     
+    # Iterate through cols
     for col in cols:
-        
-        # Buy
-        if col > requirement:
+        if col > requirement: # Buy!
             return 1
-        
-        # Sell
-        if col < -requirement:
+        if col < -requirement: # Sell!
             return -1
     
-    # Hold
+    # Hold (neither of the conditions above were met, return 0)
     return 0
