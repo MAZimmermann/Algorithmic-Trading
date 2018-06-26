@@ -3,6 +3,8 @@
 Created on Tue Jun  5 08:22:16 2018
 
 @author: MAZimmermann
+
+Code replicated/inspired by Sentdex 'Python Programming for Finance'
 """
 
 # Import datetime module

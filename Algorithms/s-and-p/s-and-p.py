@@ -3,6 +3,8 @@
 Created on Tue Jun  5 09:52:01 2018
 
 @author: MAZimmermann
+
+Code replicated/inspired by Sentdex 'Python Programming for Finance'
 """
 
 # Module for web scraping

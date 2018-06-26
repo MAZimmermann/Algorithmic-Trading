@@ -3,12 +3,16 @@
 Created on Wed Jun 20 15:07:06 2018
 
 @author: MAZimmermann
+
+Code replicated/inspired by Sentdex 'Python Programming for Finance'
 """
 
 """ import required packages (numpy, pandas, pickle) """
 import numpy as np
 import pandas as pd
 import pickle
+
+from collections import counter
 
 def process_data_for_labels(ticker):
     
@@ -60,3 +64,33 @@ def buy_sell_hold(*args):
     
     # Hold (neither of the conditions above were met, return 0)
     return 0
+
+def extract_featuresets(ticker):
+    tickers, df = process_data_for_labels(ticker)
+    df['{}_target'.format(ticker)] = list(map(buy_sell_hold, 
+       df['{}_1d'.format(ticker, i)],
+       df['{}_2d'.format(ticker, i)],
+       df['{}_3d'.format(ticker, i)],
+       df['{}_4d'.format(ticker, i)],
+       df['{}_5d'.format(ticker, i)],
+       df['{}_6d'.format(ticker, i)],
+       df['{}_7d'.format(ticker, i)]
+       ))
+    vals = df['{}_target'.format(ticker, i)].values.tolist()
+    str_vals = [str(i) for i in vals]
+    print('Data spread:', Counter(str_vals))
+    
+    df.fillna(0, inplace=True)
+    df = df.replace([np.inf, -np.inf, np.nan])
+    df.dropna(inplace=True)
+    
+    df_vals = df[[ticker for ticker in tickers]].pct_change()
+    df_vals = df_vals.replace([np.inf, -np.inf, 0])
+    df_vals.fillna(0, inplace=True)
+    
+    # 'X' feature sets, 'y' labels
+    X = df_vals.values
+    y = df['{}_target'.format(ticker)].values
+    
+    return X, y, df
+    

@@ -3,6 +3,8 @@
 Created on Mon Jun  4 17:30:23 2018
 
 @author: MAZimmermann
+
+Code replicated/inspired by Sentdex 'Python Programming for Finance'
 """
 
 import datetime as dt
