@@ -7,13 +7,15 @@ Created on Wed Jun 20 15:07:06 2018
 Code replicated/inspired by Sentdex 'Python Programming for Finance'
 """
 
-""" import required packages (numpy, pandas, pickle) """
+# Import Counter
 from collections import Counter
 
+# Import numpy, pandas, and pickle
 import numpy as np
 import pandas as pd
 import pickle
 
+# Import modules/classifiers from sklearn
 from sklearn import svm, cross_validation, neighbors
 from sklearn.ensemble import VotingClassifier, RandomForestClassifier
 
@@ -58,7 +60,7 @@ def buy_sell_hold(*args):
     cols = [c for c in args]
     
     # Set stock price change requirement (in this case, 2%)
-    requirement = 0.03
+    requirement = 0.05
     
     # Iterate through cols
     for col in cols:
@@ -104,16 +106,21 @@ def extract_featuresets(ticker):
     return X, y, df
 
 def learn(ticker):
+    
+    # extract_featuresets('__') will return X, y, and df
     X, y, df = extract_featuresets('XOM')
     
+    # Define training and testing
     X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size = 0.25)
     
     # Voting classifier that combines three distinct classifiers
     clf = VotingClassifier([('lsvc', svm.LinearSVC()),
                             ('knn', neighbors.KNeighborsClassifier()),
                             ('rfor', RandomForestClassifier())])
+ 
     
-    clf.fit(X_train, y_train)
+    # X is the percent change data for all of the companies, and y is the target (0, 1, or -1)
+    clf.fit(X_train, y_train) # We need to "fit" the input data to the target
     
     confidence = clf.score(X_test, y_test)
     print('Accuracy:', confidence)
