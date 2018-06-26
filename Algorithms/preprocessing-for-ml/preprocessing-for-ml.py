@@ -9,9 +9,13 @@ Code replicated/inspired by Sentdex 'Python Programming for Finance'
 
 """ import required packages (numpy, pandas, pickle) """
 from collections import Counter
+
 import numpy as np
 import pandas as pd
 import pickle
+
+from sklearn import svm, cross_validation, neighbors
+from sklearn.ensemble import VotingClassifier, RandomForestClassifier
 
 def process_data_for_labels(ticker):
     
@@ -54,7 +58,7 @@ def buy_sell_hold(*args):
     cols = [c for c in args]
     
     # Set stock price change requirement (in this case, 2%)
-    requirement = 0.02
+    requirement = 0.03
     
     # Iterate through cols
     for col in cols:
@@ -98,5 +102,36 @@ def extract_featuresets(ticker):
     y = df['{}_target'.format(ticker)].values
     
     return X, y, df
+
+def learn(ticker):
+    X, y, df = extract_featuresets('XOM')
     
-extract_featuresets('XOM')
+    X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size = 0.25)
+    
+    # Voting classifier that combines three distinct classifiers
+    clf = VotingClassifier([('lsvc', svm.LinearSVC()),
+                            ('knn', neighbors.KNeighborsClassifier()),
+                            ('rfor', RandomForestClassifier())])
+    
+    clf.fit(X_train, y_train)
+    
+    confidence = clf.score(X_test, y_test)
+    print('Accuracy:', confidence)
+    
+    predictions = clf.predict(X_test)
+    print('Predicted spread:', Counter(predictions))
+    
+    """
+     In the future... if you train and are happy with the confidence value,
+      just run clf.predict
+     
+     If you don't want to retrain this model again, pickle out the classifier,
+      load in the classifier, and run clf.predict
+    """
+    
+    return confidence
+
+learn('BAC')
+    
+    
+    
