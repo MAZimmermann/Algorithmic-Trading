@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu May 31 14:36:49 2018
-
-@author: MAZimmermann
-"""
-
 """
 This algorithm will not work outside of Quantopian's
  online development environment
@@ -32,8 +25,7 @@ def initialize(context):
     """
     Define new element in context dictionary
     
-    "context" is a python dictionary that stores information on your strategy 
-     and passes it to other methods in your algorithm
+    "context" is a python dictionary that stores information on your strategy, and passes it to other methods in your algorithm
     
     "sid" allows us to search for companies/equities by name, ticker, etc.
     """
@@ -59,12 +51,12 @@ def ma_crossover_handling(context, data):
     """
     Gather history on aapl
     """
-    hist = data.history(context.aapl, 'price', 50, '1d')
+    hist = data.history(context.aapl, 'price', 100, '1d')
     
     """
     Caculate a simple moving average for 50 days and 20 days
     """
-    sma_50 = hist.mean()
+    sma_100 = hist.mean()
     sma_20 = hist[-20:].mean()
     
     """
@@ -78,7 +70,7 @@ def ma_crossover_handling(context, data):
     
     Quantopian provides a variaty of options for "order_..."
     """
-    if sma_20 > sma_50:
+    if sma_20 > sma_100:
         
         if context.aapl not in open_orders:
             """
@@ -86,7 +78,7 @@ def ma_crossover_handling(context, data):
             """
             order_target_percent(context.aapl, 1.0)
         
-    elif sma_20 < sma_50:
+    elif sma_20 < sma_100:
         
         if context.aapl not in open_orders:
             """
@@ -105,4 +97,3 @@ def handle_data(context, data):
     This method will be called on every trade event for
      the securities you specify, and it rUnS EVeRY MINuTE!
     """
-    
