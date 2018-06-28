@@ -5,16 +5,24 @@ Created on Thu Jun 28 14:21:29 2018
 @author: MAZimmermann
 """
 
-import pandas as pd
-import pandas_datareader.data as web
+# Module for web scraping
+import bs4 as bs
 
-from pandas_datareader import wb
-matches = wb.search('gdp.*capita.*const')
+# Module for making http requests
+import requests
 
-from datetime import date
-start = date(date.today().year, 1, 1)
-end = date(date.today().year, 12, 31)
+# Change to ticker of your choosing
+ticker = 'xom'
 
-#df = web.DataReader('XOM', 'robinhood', start, end)
+url = 'https://www.zacks.com/stock/chart/'+ticker.upper()+'/fundamental/pe-ratio-ttm'
 
-print(matches.head())
+# Make get request to sklickcharts, store response in resp
+resp = requests.get(url)
+
+# Make new beautiful soup object
+soup = bs.BeautifulSoup(resp.text, "lxml")
+
+# Use bs4 to find 'chart_canvas' tag
+chart_canvas = soup.findAll('div', {'id': 'chart_canvas'})
+
+print(chart_canvas)
