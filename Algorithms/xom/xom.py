@@ -8,10 +8,13 @@ Created on Thu Jun 28 14:21:29 2018
 import pandas as pd
 import pandas_datareader.data as web
 
+from pandas_datareader import wb
+matches = wb.search('gdp.*capita.*const')
+
 from datetime import date
 start = date(date.today().year, 1, 1)
 end = date(date.today().year, 12, 31)
 
-df = web.DataReader('XOM', 'iex', start, end)
+#df = web.DataReader('XOM', 'robinhood', start, end)
 
-print(df.head())
+print(matches.head())
