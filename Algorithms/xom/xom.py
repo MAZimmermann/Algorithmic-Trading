@@ -11,18 +11,20 @@ import bs4 as bs
 # Module for making http requests
 import requests
 
+# Only using this temporarily...
+import webbrowser as wb
+
 # Change to ticker of your choosing
 ticker = 'xom'
 
+# .upper() will change all the letters in 'ticker' to upercase (not sure if this is necessary)
 url = 'https://www.zacks.com/stock/chart/'+ticker.upper()+'/fundamental/pe-ratio-ttm'
 
-# Make get request to sklickcharts, store response in resp
+# Make get request to our custom url, store response in resp
 resp = requests.get(url)
 
 # Make new beautiful soup object
 soup = bs.BeautifulSoup(resp.text, "lxml")
 
-# Use bs4 to find 'chart_canvas' tag
-chart_canvas = soup.findAll('div', {'id': 'chart_canvas'})
-
-print(chart_canvas)
+# opens in default browser (again, only using this temporarily...)
+wb.open_new(url)
