@@ -23,5 +23,17 @@ resp = requests.get(url)
 # Make new beautiful soup object
 soup = bs.BeautifulSoup(resp.text, "lxml")
 
-# Use BeautifulSoup to find all table elements of class 'display dataTable no-footer'
-table = soup.find('table', {'class': 'display dataTable no-footer'})
+# This will grab descriptive section containing the current P/E
+section = soup.find('section', {'id': 'stock_comp_desc'})
+
+# zacks.com has a predictable format for listing a companies P/E
+start = 'trailing-twelve-months P/E of'
+end = 'compared to'
+
+for ptag in section.findAll('p'):
+    if "trailing-twelve-months P/E of" not in ptag.text: 
+        continue
+    else:
+        # We found the P/E :)
+        theGoods = ptag.text[ptag.text.find(start):ptag.text.find(end)]
+        print(ticker,"has a",theGoods)
