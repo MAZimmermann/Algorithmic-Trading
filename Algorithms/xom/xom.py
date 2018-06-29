@@ -11,9 +11,6 @@ import bs4 as bs
 # Module for making http requests
 import requests
 
-# Only using this temporarily...
-import webbrowser as wb
-
 # Change to ticker of your choosing
 ticker = 'xom'
 
@@ -26,5 +23,5 @@ resp = requests.get(url)
 # Make new beautiful soup object
 soup = bs.BeautifulSoup(resp.text, "lxml")
 
-# opens in default browser (again, only using this temporarily...)
-wb.open_new(url)
+# Use BeautifulSoup to find all table elements of class 'display dataTable no-footer'
+table = soup.find('table', {'class': 'display dataTable no-footer'})
