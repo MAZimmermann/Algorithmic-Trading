@@ -18,7 +18,7 @@ ticker = 'xom'
 url = 'https://www.zacks.com/stock/chart/'+ticker.upper()+'/fundamental/pe-ratio-ttm'
 
 # Make get request to our custom url, store response in resp
-resp = requests.get(url)
+resp = requests.get(url, timeout=5)
 
 # Make new beautiful soup object
 soup = bs.BeautifulSoup(resp.text, "lxml")
